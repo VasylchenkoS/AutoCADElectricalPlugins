@@ -7,7 +7,8 @@ Imports AutoCADElectricalSpecifications.com.vasilchenko.Modules
 Imports AutoCADVBNETLayoutCreator
 Imports Autodesk.AutoCAD.DatabaseServices
 Imports Autodesk.AutoCAD.EditorInput
-
+Imports AutoCADTerminalBuilder
+Imports AutoCADCableDrawingMaker
 
 Namespace com.vasilchenko
     Public Class Commands
@@ -17,7 +18,7 @@ Namespace com.vasilchenko
         End Function
 
         <CommandMethod("ASU_Terminal_Builder", CommandFlags.Session)>
-        Public Shared Sub Builder()
+        Public Shared Sub TerminalBuilder()
 
             Application.AcadApplication.ActiveDocument.SendCommand("(command ""_-Purge"")(command ""_ALL"")(command ""*"")(command ""_N"")" & vbCr)
             Application.AcadApplication.ActiveDocument.SendCommand("AEREBUILDDB" & vbCr)
@@ -41,7 +42,6 @@ Namespace com.vasilchenko
         <CommandMethod("ASU_Terminal_MirrorDescription", CommandFlags.Session)>
         Public Shared Sub StartSwipe()
             Using docLock As DocumentLock = Application.DocumentManager.MdiActiveDocument.LockDocument()
-                Dim objForm = New ufTerminalSelector
                 Try
                     ModifyTerminal.SwipeTerminalModule.StartSwipe()
                 Catch ex As Exception
@@ -51,12 +51,11 @@ Namespace com.vasilchenko
         End Sub
 
         <CommandMethod("ASU_Terminal_Redraw", CommandFlags.Session)>
-        Public Shared Sub StartCheck()
-            
+        Public Shared Sub StartRedraw()
+
             Application.AcadApplication.ActiveDocument.SendCommand("AEREBUILDDB" & vbCr)
 
             Using docLock As DocumentLock = Application.DocumentManager.MdiActiveDocument.LockDocument()
-                Dim objForm = New ufTerminalSelector
                 Try
                     ModifyTerminal.RedrawTerminalModule.StartRedraw()
                 Catch ex As Exception
@@ -68,7 +67,6 @@ Namespace com.vasilchenko
         <CommandMethod("ASU_Terminal_MoveTermdescToRight", CommandFlags.Session)>
         Public Shared Sub MoveDescriptionToRight()
             Using docLock As DocumentLock = Application.DocumentManager.MdiActiveDocument.LockDocument()
-                Dim objForm = New ufTerminalSelector
                 Try
                     ModifyTerminal.MoveTerminalDescription.MoveRight()
                 Catch ex As Exception
@@ -86,38 +84,41 @@ Namespace com.vasilchenko
 
             Application.AcadApplication.ActiveDocument.SendCommand("AEREBUILDDB" & vbCr)
 
+            Dim acTableObjectID As ObjectId = Nothing
+
             Using docLock As DocumentLock = Application.DocumentManager.MdiActiveDocument.LockDocument()
-                Dim acTransaction As Transaction = acDatabase.TransactionManager.StartTransaction()
-                Try
-                    Dim uf As New SpecSelector
-                    uf.ShowDialog()
-                    If uf.rbProjUpdate.Checked = True Then
-                    ElseIf uf.rbProjCreate.Checked = True Then
-                        ProjectTableDrawing.ProjectTable(acDatabase, acTransaction, acEditor)
-                        acEditor.WriteMessage("Таблица успешно создана")
-                    ElseIf uf.rbSheetCreate.Checked = True Then
-                        KDTableDrawing.DrawSheetTable(acDatabase, acTransaction, acEditor)
-                        acEditor.WriteMessage("Таблица успешно создана")
-                    ElseIf uf.rbSheetUpdate.Checked = True Then
-                        KDTableUpdater.UpdateSheetTable(acDocument, acDatabase, acTransaction, acEditor)
-                        acEditor.WriteMessage("Таблица успешно обновлена")
-                    ElseIf uf.rbPageCreate.Checked = True Then
-                        PageTableDrawing.DrawPagesTable(acDatabase, acTransaction, acEditor)
-                        acEditor.WriteMessage("Таблица успешно создана")
-                    ElseIf uf.rbPageUpdate.Checked = True Then
-                        PageTableUpdater.UpdatePageTable(acDatabase, acTransaction, acEditor)
-                        acEditor.WriteMessage("Таблица успешно создана")
-                    Else
-                        Exit Sub
-                    End If
-                    uf.Dispose()
-                    acTransaction.Commit()
-                Catch ex As Exception
-                    MsgBox("ERROR:[" & ex.Message & "]" & vbCr & "TargetSite: " & ex.TargetSite.ToString & vbCr & "StackTrace: " & ex.StackTrace, vbCritical, "ERROR!")
-                    acTransaction.Abort()
-                Finally
-                    acTransaction.Dispose()
-                End Try
+                Using acTransaction As Transaction = acDatabase.TransactionManager.StartTransaction()
+                    Try
+                        Dim uf As New SpecSelector
+                        uf.ShowDialog()
+                        If uf.rbProjUpdate.Checked = True Then
+                        ElseIf uf.rbProjCreate.Checked = True Then
+                            acTableObjectID = ProjectTableDrawing.ProjectTable(acDatabase, acTransaction, acEditor)
+                            acEditor.WriteMessage("Таблица успешно создана")
+                        ElseIf uf.rbSheetCreate.Checked = True Then
+                            acTableObjectID = KDTableDrawing.DrawSheetTable(acDatabase, acTransaction, acEditor)
+                            acEditor.WriteMessage("Таблица успешно создана")
+                        ElseIf uf.rbSheetUpdate.Checked = True Then
+                            acTableObjectID = KDTableUpdater.UpdateSheetTable(acDocument, acDatabase, acTransaction, acEditor)
+                            acEditor.WriteMessage("Таблица успешно обновлена")
+                        ElseIf uf.rbPageCreate.Checked = True Then
+                            acTableObjectID = PageTableDrawing.DrawPagesTable(acDatabase, acTransaction, acEditor)
+                            acEditor.WriteMessage("Таблица успешно создана")
+                        ElseIf uf.rbPageUpdate.Checked = True Then
+                            acTableObjectID = PageTableUpdater.UpdatePageTable(acDatabase, acTransaction, acEditor)
+                            acEditor.WriteMessage("Таблица успешно создана")
+                        Else
+                            Exit Sub
+                        End If
+                        uf.Dispose()
+                        acTransaction.Commit()
+                    Catch ex As Exception
+                        MsgBox("ERROR:[" & ex.Message & "]" & vbCr & "TargetSite: " & ex.TargetSite.ToString & vbCr & "StackTrace: " & ex.StackTrace, vbCritical, "ERROR!")
+                        acTransaction.Abort()
+                    End Try
+
+                End Using
+                If Not IsNothing(acTableObjectID) Then AutoCADElectricalSpecifications.com.vasilchenko.Commands.TableRowUpdater(acDatabase, acEditor, acTableObjectID)
             End Using
 
         End Sub
@@ -171,14 +172,18 @@ Namespace com.vasilchenko
 
         End Sub
 
-        <CommandMethod("ASU_Marking_Maker", CommandFlags.Session)>
+        <CommandMethod("ASU_Wire_Marking_Maker", CommandFlags.Session)>
+        Public Shared Sub WireMarking()
+            MarkingModule.CreateFileWithWireMarking()
+        End Sub
+
+        <CommandMethod("ASU_Address_Marking_Maker", CommandFlags.Session)>
         Public Shared Sub AddressMarking()
-            AddressMarkingModule.CreateFileWithAddressMarking()
+            MarkingModule.CreateFileWithAddressMarking()
         End Sub
 
         <CommandMethod("ASU_TAG_CHANGE", CommandFlags.Session)>
         Public Shared Sub TagChanger()
-
             Using docLock As DocumentLock = Application.DocumentManager.MdiActiveDocument.LockDocument()
                 Try
                     TagChangerModule.ChangeTag()
@@ -187,6 +192,64 @@ Namespace com.vasilchenko
                 End Try
             End Using
 
+        End Sub
+
+        <CommandMethod("ASU_Terminal_Data_Redraw", CommandFlags.Session)>
+        Public Shared Sub StartDataRedraw()
+
+            Application.AcadApplication.ActiveDocument.SendCommand("AEREBUILDDB" & vbCr)
+
+            Using docLock As DocumentLock = Application.DocumentManager.MdiActiveDocument.LockDocument()
+                Try
+                    ModifyTerminal.RedrawDataTerminalModule.StartRedrawData()
+                Catch ex As Exception
+                    MsgBox("ERROR:[" & ex.Message & "]" & vbCr & "TargetSite: " & ex.TargetSite.ToString & vbCr & "StackTrace: " & ex.StackTrace, vbCritical, "ERROR!")
+                End Try
+            End Using
+        End Sub
+
+        <CommandMethod("ASU_Project_Mount_Builder", CommandFlags.Session)>
+        Public Shared Sub ProjectMountBuilder()
+
+            Application.AcadApplication.ActiveDocument.SendCommand("(command ""_-Purge"")(command ""_ALL"")(command ""*"")(command ""_N"")" & vbCr)
+            Application.AcadApplication.ActiveDocument.SendCommand("AEREBUILDDB" & vbCr)
+
+            If Application.GetSystemVariable("MIRRTEXT") = "1" Then
+                Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("MIRRTEXT variable set to 0")
+                Application.SetSystemVariable("MIRRTEXT", 0)
+            End If
+
+            Using docLock As DocumentLock = Application.DocumentManager.MdiActiveDocument.LockDocument()
+                Dim objForm = New AutoCADProjectMountSchema.ufLocationSelector
+                Try
+                    objForm.ShowDialog()
+                Catch ex As Exception
+                    MsgBox("ERROR:[" & ex.Message & "]" & vbCr & "TargetSite: " & ex.TargetSite.ToString & vbCr & "StackTrace: " & ex.StackTrace, vbCritical, "ERROR!")
+                End Try
+            End Using
+
+        End Sub
+
+        <CommandMethod("ASU_Cable_Drawing", CommandFlags.Session)>
+        Public Shared Sub CableMaker()
+
+            Application.AcadApplication.ActiveDocument.SendCommand("(command ""_-Purge"")(command ""_ALL"")(command ""*"")(command ""_N"")" & vbCr)
+            Application.AcadApplication.ActiveDocument.SendCommand("AEREBUILDDB" & vbCr)
+
+            If Application.GetSystemVariable("MIRRTEXT") = "1" Then
+                Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("MIRRTEXT variable set to 0")
+                Application.SetSystemVariable("MIRRTEXT", 0)
+            End If
+
+            Using docLock As DocumentLock = Application.DocumentManager.MdiActiveDocument.LockDocument()
+                Using objForm As New LocationSelector
+                    Try
+                        objForm.ShowDialog()
+                    Catch ex As Exception
+                        MsgBox("ERROR:[" & ex.Message & "]" & vbCr & "TargetSite: " & ex.TargetSite.ToString & vbCr & "StackTrace: " & ex.StackTrace, vbCritical, "ERROR!")
+                    End Try
+                End Using
+            End Using
         End Sub
 
     End Class

@@ -1,7 +1,4 @@
-﻿
-Imports AutoCADElectrical.com.vasilchenko.DBAccessConnection
-Imports AutoCADElectrical.com.vasilchenko.TerminalClasses
-Imports AutoCADElectrical.com.vasilchenko.TerminalModules
+﻿Imports AutoCADTerminalBuilder.com.vasilchenko.Classes
 Imports Autodesk.AutoCAD.ApplicationServices
 Imports Autodesk.AutoCAD.DatabaseServices
 Imports Autodesk.AutoCAD.EditorInput
@@ -51,9 +48,8 @@ Namespace com.vasilchenko.ModifyTerminal
                         End Select
                     Next
 
-                    Dim newTerminal As TerminalClass = DataAccessObject.FillTermTypeData(strTagstrp, CShort(strNum), strLocation)
-                    DataAccessObject.FillSingleTerminalBlockPath(newTerminal)
-                    DataAccessObject.FillSingleTerminalConnectionsData(newTerminal.BottomLevelTerminal, newTerminal.Location, newTerminal.TagStrip)
+
+                    Dim newTerminal As MultilevelTerminalClass = New AcadConnector().FillTerminalData(strTagstrp, strNum, strLocation)
 
                     If newTerminal.Catalog <> strCat Then
                         Dim response = MsgBox("Каталожный номер изменен! Перестроить клеммник полностью?", MsgBoxStyle.YesNoCancel + MsgBoxStyle.Information)
@@ -73,11 +69,12 @@ Namespace com.vasilchenko.ModifyTerminal
             End While
         End Sub
 
-        Private Sub RedrawCurrentBlock(acDatabase As Database, acEditor As Editor, acTransaction As Transaction, newTerminal As TerminalClass, acBlckRef As BlockReference, dblWidth As Double, dblHeight As Double)
+        Private Sub RedrawCurrentBlock(acDatabase As Database, acEditor As Editor, acTransaction As Transaction, newTerminal As MultilevelTerminalClass, acBlckRef As BlockReference, dblWidth As Double, dblHeight As Double)
             Dim acPointPositionRight = New Point3d(acBlckRef.Position.X + (dblWidth / 2), acBlckRef.Position.Y - (dblHeight / 2), 0)
             Dim acPointPositionLeft = New Point3d(acBlckRef.Position.X - (dblWidth / 2), acBlckRef.Position.Y - (dblHeight / 2), 0)
             RemoveLine(acDatabase, acEditor, acPointPositionLeft, acPointPositionRight)
-            DrawBlocks.DrawTerminalBlock(acDatabase, acTransaction, newTerminal, acBlckRef.Position, 1.0)
+            Dim objAcadConnetctor As New AcadConnector()
+            objAcadConnetctor.DrawTerminalBlock(acDatabase, acTransaction, newTerminal, acBlckRef.Position, acBlckRef)
             acBlckRef.UpgradeOpen()
             acBlckRef.Erase()
         End Sub

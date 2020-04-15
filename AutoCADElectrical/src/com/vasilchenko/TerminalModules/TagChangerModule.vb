@@ -25,11 +25,10 @@ Namespace com.vasilchenko.TerminalModules
                 acEditor.WriteMessage("Не выбран элемент" & vbCrLf)
                 Exit Sub
             Else
-                Dim ufTagChanger As New ufTagChanger
-                ufTagChanger.ShowDialog()
-
                 Const i As Short = 1
                 While i <> 0
+                    Dim ufTagChanger As New ufTagChanger
+                    ufTagChanger.ShowDialog()
                     If ufTagChanger.tbReplace.TextLength <> 0 AndAlso ufTagChanger.tbSearch.TextLength <> 0 Then
                         Using acTransaction As Transaction = acDatabase.TransactionManager.StartTransaction
 

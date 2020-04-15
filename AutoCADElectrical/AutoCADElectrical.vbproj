@@ -13,7 +13,7 @@
     <AssemblyName>AutoCADElectrical</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>Windows</MyType>
-    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{F184B08F-C81C-45F6-A57F-5ABD9991F28F}</ProjectTypeGuids>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -96,21 +96,55 @@
     <!--ACA Refences End-->
     <!--AME Referebces Begin-->
     <!--AME Reference End-->
-    <Reference Include="accoremgd">
+    <Reference Include="accoremgd, Version=23.1.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files\Autodesk\ApplicationPlugins\accoremgd.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="acdbmgd">
+    <Reference Include="acdbmgd, Version=23.1.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files\Autodesk\ApplicationPlugins\acdbmgd.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="AcePageManMgd, Version=1.0.6977.3331, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files\Autodesk\ApplicationPlugins\AcePageManMgd.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="acmgd">
+    <Reference Include="acmgd, Version=23.1.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files\Autodesk\ApplicationPlugins\acmgd.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="AutoCADVBNETLayoutCreator">
-      <HintPath>..\..\AutoCADVBNETLayoutCreator\AutoCADVBNETLayoutCreator\bin\Debug\AutoCADVBNETLayoutCreator.dll</HintPath>
+    <Reference Include="AutoCADCableDrawingMaker, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\..\AutoCADCableDrawingMaker\AutoCADCableDrawingMaker\bin\x64\Debug\AutoCADCableDrawingMaker.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="AutoCADElectricalSpecifications, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\..\AutoCADElectricalSpecifications\AutoCADElectricalSpecifications\bin\x64\Debug\AutoCADElectricalSpecifications.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="AutoCADProjectMountSchema, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\..\AutoCADProjectMountSchema\AutoCADProjectMountSchema\bin\x64\Debug\AutoCADProjectMountSchema.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="AutoCADTerminalBuilder, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\..\AutoCADTerminalBuilder\AutoCADTerminalBuilder\bin\x64\Debug\AutoCADTerminalBuilder.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="AutoCADVBNETLayoutCreator, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\..\AutoCADVBNETLayoutCreator\AutoCADVBNETLayoutCreator\bin\x64\Debug\AutoCADVBNETLayoutCreator.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Drawing" />
@@ -135,7 +169,6 @@
     <Import Include="Microsoft.VisualBasic" />
     <Import Include="System" />
     <Import Include="System.Collections" />
-    <Import Include="System.Collections.Generic" />
     <Import Include="System.Data" />
     <Import Include="System.Diagnostics" />
     <Import Include="System.Linq" />
@@ -143,20 +176,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\com\vasilchenko\ModifyTerminal\MoveTerminalDescription.vb" />
-    <Compile Include="default_catDataSet.Designer.vb">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>default_catDataSet.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="default_catDataSet.vb">
-      <DependentUpon>default_catDataSet.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="footprint_lookupDataSet.Designer.vb">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>footprint_lookupDataSet.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="src\com\vasilchenko\DBAccessConnection\WiresAdditionalFunctions.vb" />
+    <Compile Include="src\com\vasilchenko\ModifyTerminal\RedrawDataTerminalModule.vb" />
     <Compile Include="src\com\vasilchenko\ModifyTerminal\RedrawTerminalModule.vb" />
     <Compile Include="src\com\vasilchenko\TerminalForms\ufTagChanger.Designer.vb">
       <DependentUpon>ufTagChanger.vb</DependentUpon>
@@ -165,27 +185,8 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="src\com\vasilchenko\TerminalModules\TagChangerModule.vb" />
-    <Compile Include="src\com\vasilchenko\TerminalClasses\TerminalClass.vb" />
-    <Compile Include="src\com\vasilchenko\TerminalClasses\JumperClass.vb" />
-    <Compile Include="src\com\vasilchenko\TerminalClasses\TerminalStripClass.vb" />
-    <Compile Include="src\com\vasilchenko\TerminalClasses\TerminalDictionaryClass.vb" />
-    <Compile Include="src\com\vasilchenko\TerminalEnums\EnumFunctions.vb" />
-    <Compile Include="src\com\vasilchenko\TerminalForms\ufTerminalSelector.Designer.vb">
-      <DependentUpon>ufTerminalSelector.vb</DependentUpon>
-    </Compile>
-    <Compile Include="src\com\vasilchenko\TerminalForms\ufTerminalSelector.vb">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="GlobalSuppressions.vb" />
-    <Compile Include="src\com\vasilchenko\TerminalClasses\LevelTerminalClass.vb" />
-    <Compile Include="src\com\vasilchenko\TerminalClasses\WireClass.vb" />
-    <Compile Include="src\com\vasilchenko\DBAccessConnection\DatabaseConnection.vb" />
-    <Compile Include="src\com\vasilchenko\DBAccessConnection\DataAccessObject.vb" />
-    <Compile Include="src\com\vasilchenko\TerminalEnums\TerminalEnums.vb" />
-    <Compile Include="src\com\vasilchenko\TerminalEnums\EnumDescriptor.vb" />
-    <Compile Include="src\com\vasilchenko\TerminalEnums\EnumDescriptorCollection.vb" />
     <Compile Include="src\com\vasilchenko\Commands.vb" />
-    <Compile Include="src\com\vasilchenko\TerminalClasses\CableClass.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -201,26 +202,12 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="src\com\vasilchenko\TerminalForms\ufTerminalTypeSelector.Designer.vb">
-      <DependentUpon>ufTerminalTypeSelector.vb</DependentUpon>
-    </Compile>
-    <Compile Include="src\com\vasilchenko\TerminalForms\ufTerminalTypeSelector.vb">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="src\com\vasilchenko\TerminalModules\AddressMarkingModule.vb" />
-    <Compile Include="src\com\vasilchenko\TerminalModules\DrawLayerChecker.vb" />
-    <Compile Include="src\com\vasilchenko\TerminalModules\DrawBlocks.vb" />
-    <Compile Include="src\com\vasilchenko\TerminalModules\AddTerminalAccessories.vb" />
-    <Compile Include="src\com\vasilchenko\TerminalModules\AddJumpers.vb" />
     <Compile Include="src\com\vasilchenko\ModifyTerminal\SwipeTerminalModule.vb" />
-    <Compile Include="src\com\vasilchenko\TerminalModules\TerminalClassMapping.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="src\com\vasilchenko\TerminalForms\ufTagChanger.resx">
       <DependentUpon>ufTagChanger.vb</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="src\com\vasilchenko\TerminalForms\ufTerminalSelector.resx">
-      <DependentUpon>ufTerminalSelector.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
@@ -228,34 +215,9 @@
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="src\com\vasilchenko\TerminalForms\ufTerminalTypeSelector.resx">
-      <DependentUpon>ufTerminalTypeSelector.vb</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="default_catDataSet.xsc">
-      <DependentUpon>default_catDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="default_catDataSet.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>default_catDataSet.Designer.vb</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="default_catDataSet.xss">
-      <DependentUpon>default_catDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="footprint_lookupDataSet.xsc">
-      <DependentUpon>footprint_lookupDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="footprint_lookupDataSet.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>footprint_lookupDataSet.Designer.vb</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="footprint_lookupDataSet.xss">
-      <DependentUpon>footprint_lookupDataSet.xsd</DependentUpon>
-    </None>
     <None Include="My Project\Application.myapp">
       <Generator>MyApplicationCodeGenerator</Generator>
       <LastGenOutput>Application.Designer.vb</LastGenOutput>
@@ -287,12 +249,6 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\AutoCADElectricalSpecifications\AutoCADElectricalSpecifications\AutoCADElectricalSpecifications.vbproj">
-      <Project>{ea30a508-d0dc-4366-8ec4-5986665710b4}</Project>
-      <Name>AutoCADElectricalSpecifications</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
